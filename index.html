@@ -16,19 +16,41 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;background:var(--cream);color:#26352e}
 header{
-  background:linear-gradient(135deg,#252b28,#526f4e);
+  background-color:#343a36;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 47px,
+      rgba(220,215,200,0.22) 48px,
+      transparent 51px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 95px,
+      rgba(220,215,200,0.22) 96px,
+      transparent 99px
+    );
   color:white;
   padding:32px 16px;
   text-align:center;
-  border-bottom:5px solid var(--red);
+  border-bottom:5px solid #a7463d;
 }
+
 header h1{
   margin:0;
   font-size:clamp(24px,4vw,36px);
   letter-spacing:2px;
   font-weight:800;
+  text-shadow:0 2px 5px #00000080;
 }
-header p{margin:8px 0 0;color:#d6e8de}
+
+header p{
+  margin:10px 0 0;
+  color:#e5e8df;
+  font-size:14px;
+}
 main{max-width:1180px;margin:20px auto;padding:0 14px;display:grid;grid-template-columns:340px 1fr;gap:16px}
 .panel,.map-panel{background:white;border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 3px 12px #163c2510}
 h2{font-size:18px;margin:0 0 14px;color:var(--dark)}
