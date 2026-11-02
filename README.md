@@ -1,0 +1,1 @@
+# kumamoto-500yen-map
