@@ -267,6 +267,7 @@ let currentUser = null;
 let isAdmin = false;
 let spots = [];
 let markers = [];
+let selectedMarker = null;
 
 const map = L.map("map").setView([32.803,130.713],13);
 
@@ -278,6 +279,32 @@ L.tileLayer(
 ).addTo(map);
 
 const $ = id => document.getElementById(id);
+
+ // 地図をクリックした場所の位置情報を取得
+map.on("click", function(e) {
+
+ // 前に選択した仮マーカーを削除
+ if(selectedMarker){
+  map.removeLayer(selectedMarker);
+ }
+
+ // クリックした場所の緯度・経度
+ const lat = e.latlng.lat;
+ const lng = e.latlng.lng;
+
+ // 仮マーカーを設置
+ selectedMarker = L.marker([lat,lng]).addTo(map);
+
+ // ポップアップを表示
+ selectedMarker.bindPopup(
+  "この場所を投稿地点に設定しました！"
+ ).openPopup();
+
+ // 投稿フォームに自動入力
+ document.querySelector('[name="lat"]').value = lat.toFixed(6);
+ document.querySelector('[name="lng"]').value = lng.toFixed(6);
+
+});
 
 const esc = value => String(value ?? "").replace(/[&<>"']/g,c=>({
  "&":"&amp;",
@@ -431,8 +458,17 @@ $("spotForm").addEventListener("submit",async e => {
 
  try{
   await addDoc(spotsRef,data);
-  e.target.reset();
-  alert("投稿しました。");
+
+// 仮マーカーを削除
+if(selectedMarker){
+ map.removeLayer(selectedMarker);
+ selectedMarker = null;
+}
+
+// フォームをリセット
+e.target.reset();
+
+alert("投稿しました。");
  }catch(err){
   alert("投稿できませんでした："+err.message);
  }
