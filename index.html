@@ -93,6 +93,61 @@ footer{text-align:center;color:#718078;padding:20px;font-size:12px}
  main{grid-template-columns:1fr}
  #map{height:440px}
 }
+/* 熊耳付き地図ピン */
+.bear-pin{
+  position:relative;
+  width:36px;
+  height:46px;
+  animation:bearPop .45s ease-out both;
+}
+
+/* 緑色のピン本体 */
+.bear-pin .pin-body{
+  position:absolute;
+  left:3px;
+  top:3px;
+  width:30px;
+  height:30px;
+  background:#526f4e;
+  border:2px solid white;
+  border-radius:50% 50% 50% 0;
+  transform:rotate(-45deg);
+  box-shadow:0 2px 5px #0005;
+}
+
+/* 熊の小さな耳 */
+.bear-pin .ear{
+  position:absolute;
+  top:0;
+  width:10px;
+  height:10px;
+  background:#252b28;
+  border:1px solid white;
+  border-radius:50%;
+  z-index:2;
+}
+.bear-pin .ear.left{left:4px}
+.bear-pin .ear.right{right:4px}
+
+/* 左右の赤いほっぺ */
+.bear-pin .cheek{
+  position:absolute;
+  top:15px;
+  width:5px;
+  height:5px;
+  background:#e34b4b;
+  border-radius:50%;
+  z-index:3;
+}
+.bear-pin .cheek.left{left:5px}
+.bear-pin .cheek.right{right:5px}
+
+/* ポンッと登場するアニメーション */
+@keyframes bearPop{
+  0%{transform:scale(0);opacity:0}
+  70%{transform:scale(1.2);opacity:1}
+  100%{transform:scale(1);opacity:1}
+}
 </style>
 </head>
 <body>
