@@ -1,62 +1,583 @@
-<!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>500円娯楽｜熊本のおでかけガイド</title>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>熊本500円娯楽マップ</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
-:root{--g:#173f35;--c:#ff765c;--bg:#fffaf0;--line:#eee6da}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#292720;font-family:system-ui,"Hiragino Maru Gothic ProN",sans-serif}button,input,select,textarea{font:inherit}button,a,label{cursor:pointer}.wrap{max-width:1100px;margin:auto;padding:0 20px}.top{display:flex;justify-content:space-between;align-items:center;padding:18px 0}.brand{display:flex;align-items:center;gap:12px;font-weight:900}.logo{background:var(--g);color:white;border-radius:14px;width:44px;height:44px;display:grid;place-items:center;font-size:22px}.tiny{font-size:11px;color:#887e71}.btn{border:0;border-radius:11px;padding:10px 14px;font-size:13px;font-weight:800;text-decoration:none;display:inline-block}.primary{background:var(--g);color:white}.coral{background:var(--c);color:white}.muted{background:#f4efe5;color:#554d43}.hero{padding:38px;border-radius:28px;background:linear-gradient(125deg,#ffefb8,#ffd9ca 60%,#e3e8ff);position:relative;overflow:hidden}.hero h1{font-size:clamp(36px,6vw,58px);line-height:1.13;margin:18px 0;font-weight:950}.hero p{max-width:550px;line-height:1.8}.coin{position:absolute;right:25px;bottom:-18px;font-size:120px}.section{padding-top:40px}.eyebrow{font-size:11px;font-weight:900;letter-spacing:.15em;color:#948a7b}.heading{font-size:26px;font-weight:950;margin:5px 0 16px}.panel,.spot{background:white;border:1px solid var(--line);border-radius:18px;padding:17px}.field{width:100%;border:1px solid #e7e1d7;border-radius:11px;background:#fffdf8;padding:11px;outline:none}.label{display:block;font-size:12px;font-weight:850;margin-bottom:7px}.range{width:100%;accent-color:var(--c)}.pills,.actions{display:flex;gap:8px;flex-wrap:wrap}.pill{border:1px solid #e7e1d7;background:white;border-radius:99px;padding:8px 13px;font-size:12px;font-weight:800}.pill.active{background:var(--g);color:white}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.spot{padding:15px}.spothead{display:flex;gap:12px;align-items:start}.emoji{width:45px;height:45px;border-radius:14px;background:#fff0d7;display:grid;place-items:center;font-size:23px;flex-shrink:0}.spotname{font-weight:900;font-size:14px}.badge{display:inline-block;font-size:10px;font-weight:850;border-radius:99px;padding:4px 8px;background:#e4f2e6;color:#315647;margin:5px 4px 0 0}.desc{font-size:12px;color:#655f55;line-height:1.8}.address{font-size:11px;color:#887e71;line-height:1.6}.actions{margin-top:12px}.actions .btn{font-size:11px;padding:8px 10px}.mapbox{height:370px;border-radius:15px;overflow:hidden}#map{height:100%;width:100%;background:#e9efdf}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.full{grid-column:1/-1}.hidden{display:none!important}.status{padding:12px;border-radius:11px;background:#e4f2e6;color:#315647;font-size:13px;margin-top:12px}.bad{background:#fff0d7;color:#815321}.foot{border-top:1px solid #e5ded3;margin-top:40px;padding:22px 0;color:#887e71;font-size:12px;display:flex;justify-content:space-between}@media(max-width:760px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.coin{font-size:80px;opacity:.3}}@media(max-width:560px){.grid,.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.wrap{padding:0 13px}.hero{padding:25px}.coin{opacity:.18}.hero p{max-width:100%}.heading{font-size:23px}}
-</style></head><body>
-<header class="wrap top"><div class="brand"><div class="logo">¥</div><div>500円娯楽<div class="tiny">KUMAMOTO LOCAL GUIDE</div></div></div><div class="actions"><button class="btn muted" id="adminButton" onclick="toggleAdmin()">管理者ログイン</button><button class="btn coral" onclick="document.querySelector('#register').scrollIntoView({behavior:'smooth'})">＋ スポット登録</button></div></header>
-<main class="wrap">
-<section class="hero"><span class="badge" style="background:#ffffffc9">📍 熊本市内のおでかけガイド</span><h1>500円で、<br>熊本をもっと<br><span style="color:#e65d43">楽しもう！</span></h1><p>おすすめの場所を登録して、みんなで熊本の楽しみを見つけよう。登録した場所は地図や検索にも反映されるよ。</p><a class="btn primary" href="#search">🔎 スポットを探す</a> <a class="btn" style="background:white;color:var(--g)" href="#map-section">🗺️ マップを見る</a><div class="coin">🪙</div></section>
-<section class="section" id="search"><div class="eyebrow">FIND YOUR FUN</div><h2 class="heading">おすすめスポット</h2><div class="panel">
-<label class="label" for="budget">予算の上限：<b id="budgetText" style="color:var(--c)">500円以内</b></label><input id="budget" class="range" type="range" min="0" max="500" step="100" value="500" oninput="budgetText.textContent=this.value+'円以内';render()"><div class="tiny" style="display:flex;justify-content:space-between"><span>0円</span><span>100円</span><span>300円</span><span>500円</span></div>
-<div class="label" style="margin-top:18px">ジャンル</div><div class="pills" id="genres"><button class="pill active" data-g="すべて">✨ すべて</button><button class="pill" data-g="グルメ">🍡 グルメ</button><button class="pill" data-g="自然">🌿 自然・散策</button><button class="pill" data-g="観光">📷 観光</button><button class="pill" data-g="体験">🎯 遊び・体験</button></div>
-<label class="label" for="keyword" style="margin-top:18px">キーワード</label><input id="keyword" class="field" placeholder="場所・住所・おすすめポイントで検索" oninput="render()"></div>
-<div style="display:flex;justify-content:space-between;align-items:center;margin:18px 0 12px"><b id="count">スポット 0件</b><button class="btn muted admin-only hidden" onclick="exportData()">バックアップ ↓</button></div><div class="grid" id="spots"></div><p id="empty" class="hidden" style="text-align:center;padding:25px;color:#887e71">条件に合うスポットがないよ。予算やジャンルを変えてみてね。</p></section>
-<section class="section" id="map-section"><div class="eyebrow">EXPLORE KUMAMOTO</div><h2 class="heading">マップで探そう 📍</h2><p class="desc">登録したピンを押すと詳細が見られるよ。地図をクリックすると登録する位置も選べるよ。</p><div class="panel"><div class="mapbox"><div id="map"></div></div><div class="tiny" id="mapStatus" style="margin-top:9px">地図を読み込み中…</div><div id="mapInfo" class="panel" style="margin-top:12px;background:#f8f4e9"><b>マップ上のピンを選んでね</b><p class="desc">スポットの詳細がここに表示されるよ。</p></div></div></section>
-<section class="section" id="register"><div class="eyebrow">ADD A LOCAL SPOT</div><h2 class="heading">おすすめスポットを登録しよう！</h2><p class="desc">名前や住所を入力して登録。登録した場所は検索とマップに反映されるよ。</p><div class="panel"><div id="editing" class="status hidden">スポットを編集中です。</div><form id="form" class="formgrid"><input id="id" type="hidden">
-<div><label class="label" for="name">場所・お店の名前 *</label><input id="name" class="field" maxlength="80" required placeholder="例：お気に入りの公園"></div><div><label class="label" for="genre">ジャンル *</label><select id="genre" class="field"><option>グルメ</option><option>自然</option><option>観光</option><option>体験</option></select></div>
-<div><label class="label" for="cost">予算（円）*</label><input id="cost" class="field" type="number" min="0" max="500" step="10" value="0" required><div class="tiny">500円以内のスポットを登録できます。</div></div><div><label class="label" for="address">住所・場所 *</label><input id="address" class="field" maxlength="160" required placeholder="例：熊本市中央区…"><div class="tiny">住所から位置を検索します。</div></div>
-<div class="full"><label class="label" for="desc">おすすめポイント *</label><textarea id="desc" class="field" maxlength="300" rows="3" required placeholder="どんなことが楽しめる？"></textarea></div>
-<div class="full actions"><button id="save" class="btn coral" type="submit">📍 登録してマップに追加</button><button id="cancel" class="btn muted hidden" type="button" onclick="cancelEdit()">編集をキャンセル</button><button class="btn muted" type="button" onclick="findAddress()">住所から位置を確認</button></div></form><div id="formStatus" class="status hidden" role="status"></div></div></section>
-<section class="section admin-only hidden" id="adminData"><div class="panel"><b>📦 登録データの保存・移行（管理者専用）</b><p class="desc">データはこのブラウザに保存されるよ。別の端末に移すときはバックアップをダウンロードして読み込んでね。</p><div class="actions"><button class="btn primary" onclick="exportData()">バックアップをダウンロード</button><label class="btn muted">バックアップを読み込む<input type="file" accept=".json,application/json" style="display:none" onchange="importData(event)"></label><button class="btn muted" onclick="resetData()">初期データに戻す</button></div><p class="tiny">※複数人の登録を自動共有する機能はまだありません。共有にはサーバー・データベースが必要です。</p></div></section>
-<footer class="foot"><b>¥ 500円娯楽</b><span>熊本の楽しみを、500円から。</span></footer></main>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script>
-const KEY='yen500-kumamoto-v1';
-// 公開前に必ず自分専用のパスワードへ変更してください。
-const ADMIN_PASSWORD='500yen-admin';
-let adminMode=false;
-function toggleAdmin(){if(adminMode){adminMode=false;updateAdminUI();return;}const pw=prompt('管理者パスワードを入力してください');if(pw===null)return;if(pw===ADMIN_PASSWORD){adminMode=true;updateAdminUI();alert('管理者としてログインしました。');}else{alert('パスワードが違います。');}}
-function updateAdminUI(){document.querySelectorAll('.admin-only').forEach(el=>el.classList.toggle('hidden',!adminMode));document.getElementById('adminData').classList.toggle('hidden',!adminMode);document.getElementById('adminButton').textContent=adminMode?'管理者ログアウト':'管理者ログイン';}
-const seeds=[
-{id:'s1',name:'熊本市役所 展望ロビー',genre:'観光',cost:0,address:'熊本市中央区手取本町1-1',desc:'市街地の景色を楽しむ候補スポット。開放状況を確認して訪れよう。',lat:32.8031,lng:130.7079,seed:true},
-{id:'s2',name:'熊本城 二の丸広場',genre:'観光',cost:0,address:'熊本市中央区二の丸2-1',desc:'広場を散歩したり、熊本城を背景に写真を撮ったり。',lat:32.8062,lng:130.7021,seed:true},
-{id:'s3',name:'水前寺江津湖公園',genre:'自然',cost:0,address:'熊本市東区広木町935-1',desc:'水辺の景色や自然を楽しみながらのんびり散策。',lat:32.7656,lng:130.7443,seed:true},
-{id:'s4',name:'ルフィ像（熊本県庁）',genre:'観光',cost:0,address:'熊本市中央区水前寺6-18-1',desc:'像を見たり写真を撮ったりできる観光スポット。',lat:32.7901,lng:130.7415,seed:true},
-{id:'s5',name:'商店街で500円グルメ探し',genre:'グルメ',cost:500,address:'熊本市中央区上通町',desc:'お店のメニューを比べて、予算内のおやつや軽食を探そう。',lat:32.8057,lng:130.7110,seed:true},
-{id:'s6',name:'熊本市動植物園',genre:'体験',cost:500,address:'熊本市東区健軍5-14-2',desc:'動物や植物を楽しむ候補。最新の料金や開園日を確認しよう。',lat:32.7780,lng:130.7664,seed:true}];
-let spots=load(),activeGenre='すべて',map=null,markers={},draft=null;
-function load(){try{let v=JSON.parse(localStorage.getItem(KEY));if(Array.isArray(v))return v}catch(e){}return seeds.map(s=>({...s}))}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(spots));return true}catch(e){return false}}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function emoji(s){return ({グルメ:'🍡',自然:'🌿',観光:'📷',体験:'🎯'})[s.genre]||'📍'}
-function costText(n){return +n===0?'無料':n+'円以内'}
-document.querySelectorAll('#genres button').forEach(b=>b.onclick=()=>{activeGenre=b.dataset.g;document.querySelectorAll('#genres button').forEach(x=>x.classList.toggle('active',x===b));render()});
-function render(){let max=+budget.value,q=keyword.value.trim().toLowerCase(),found=spots.filter(s=>+s.cost<=max&&(activeGenre==='すべて'||s.genre===activeGenre)&&(!q||(s.name+' '+s.address+' '+s.desc+' '+s.genre).toLowerCase().includes(q)));count.textContent='スポット '+found.length+'件';spotsEl.innerHTML=found.map(s=>`<article class="spot"><div class="spothead"><div class="emoji">${emoji(s)}</div><div><div class="spotname">${esc(s.name)}</div><span class="badge">${esc(s.genre)}</span><span class="badge">${costText(s.cost)}</span>${s.seed?'<span class="badge" style="background:#f4efe5;color:#706454">初期例</span>':'<span class="badge" style="background:#e4e8ff;color:#454d83">登録済み</span>'}</div></div><p class="desc">${esc(s.desc)}</p><div class="address">📍 ${esc(s.address)}</div><div class="actions"><button class="btn muted" onclick="selectSpot('${esc(s.id)}')">マップで見る</button>${adminMode?`<button class="btn muted" onclick="editSpot('${esc(s.id)}')">編集</button><button class="btn muted" onclick="deleteSpot('${esc(s.id)}')">削除</button>`:''}<a class="btn primary" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address)}">地図アプリ ↗</a></div></article>`).join('');empty.classList.toggle('hidden',found.length>0);refreshMarkers(found)}
-const spotsEl=document.getElementById('spots');
-function setStatus(msg,ok=true){formStatus.textContent=msg;formStatus.classList.remove('hidden');formStatus.classList.toggle('bad',!ok)}
-function refreshMarkers(found=spots){if(!map)return;let ids=new Set(found.map(s=>String(s.id)));Object.keys(markers).forEach(id=>{if(!spots.some(s=>String(s.id)===id)||!ids.has(id)){map.removeLayer(markers[id]);delete markers[id]}});found.forEach(s=>{if(!Number.isFinite(+s.lat)||!Number.isFinite(+s.lng)||markers[s.id])return;let m=L.marker([+s.lat,+s.lng]).addTo(map).bindPopup(`<b>${esc(s.name)}</b><br>${esc(costText(s.cost))} · ${esc(s.genre)}<br><button onclick="selectSpot('${esc(s.id)}')">詳細を見る</button>`);m.on('click',()=>showInfo(s));markers[s.id]=m})}
-function showInfo(s){mapInfo.innerHTML=`<div class="eyebrow">SELECTED SPOT</div><h3>${esc(s.name)}</h3><span class="badge">${esc(s.genre)}</span><span class="badge">${costText(s.cost)}</span><p class="desc">${esc(s.desc)}</p><p class="address">📍 ${esc(s.address)}</p><div class="actions">${adminMode?`<button class="btn muted" onclick="editSpot('${esc(s.id)}')">編集</button>`:''}<a class="btn primary" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address)}">地図アプリで開く ↗</a></div>`}
-function selectSpot(id){let s=spots.find(x=>String(x.id)===String(id));if(!s)return;showInfo(s);if(map&&Number.isFinite(+s.lat)&&Number.isFinite(+s.lng)){map.setView([+s.lat,+s.lng],15);markers[s.id]?.openPopup()}document.getElementById('map-section').scrollIntoView({behavior:'smooth'})}
-async function geocode(a){let r=await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=jp&q='+encodeURIComponent(a),{headers:{'Accept-Language':'ja'}});if(!r.ok)throw Error('住所検索サービスに接続できませんでした。');let v=await r.json();if(!v.length)throw Error('位置が見つかりません。住所を詳しくするか、地図上をクリックしてください。');return {lat:+v[0].lat,lng:+v[0].lon}}
-async function findAddress(){let a=address.value.trim();if(!a)return setStatus('先に住所や場所を入力してね。',false);if(!map)return setStatus('地図を読み込めません。接続を確認してください。',false);try{setStatus('住所から位置を検索中…');draft=await geocode(a);map.setView([draft.lat,draft.lng],16);L.popup().setLatLng([draft.lat,draft.lng]).setContent('検索した位置（登録時に保存）').openOn(map);setStatus('位置が見つかったよ。登録ボタンで保存してね。')}catch(e){setStatus(e.message,false)}}
-document.getElementById('form').onsubmit=async e=>{e.preventDefault();let id=document.getElementById('id').value,n=name.value.trim(),g=genre.value,c=+cost.value,a=address.value.trim(),d=desc.value.trim();if(!n||!a||!d||!Number.isFinite(c)||c<0||c>500)return setStatus('必要な項目を入力し、予算を0〜500円にしてね。',false);save.disabled=true;let p=draft,old=spots.find(s=>String(s.id)===String(id));if(!p&&old&&old.address===a&&Number.isFinite(+old.lat))p={lat:+old.lat,lng:+old.lng};if(!p&&map){try{p=await geocode(a)}catch(err){save.disabled=false;return setStatus(err.message+' 地図をクリックして位置を選ぶこともできます。',false)}}let s={id:id||'spot-'+Date.now(),name:n,genre:g,cost:c,address:a,desc:d,lat:p?.lat??null,lng:p?.lng??null,seed:false};if(id){let i=spots.findIndex(x=>String(x.id)===String(id));if(i>=0)spots[i]=s;else spots.unshift(s)}else spots.unshift(s);let ok=persist();draft=null;cancelEdit(false);render();if(p&&map){map.setView([p.lat,p.lng],15);selectSpot(s.id)}setStatus(ok?'スポットを保存！検索とマップに反映しました。':'保存できませんでした。バックアップを利用してください。',ok);save.disabled=false};
-function editSpot(id){if(!adminMode){alert('編集は管理者のみ利用できます。');return;}let s=spots.find(x=>String(x.id)===String(id));if(!s)return;document.getElementById('id').value=s.id;name.value=s.name;genre.value=s.genre;cost.value=s.cost;address.value=s.address;desc.value=s.desc;draft=Number.isFinite(+s.lat)?{lat:+s.lat,lng:+s.lng}:null;editing.classList.remove('hidden');cancel.classList.remove('hidden');save.textContent='変更を保存';document.getElementById('register').scrollIntoView({behavior:'smooth'})}
-function cancelEdit(clear=true){document.getElementById('form').reset();document.getElementById('id').value='';cost.value=0;editing.classList.add('hidden');cancel.classList.add('hidden');save.textContent='📍 登録してマップに追加';draft=null;if(clear)formStatus.classList.add('hidden')}
-function deleteSpot(id){if(!adminMode){alert('削除は管理者のみ利用できます。');return;}let s=spots.find(x=>String(x.id)===String(id));if(!s||!confirm('「'+s.name+'」を削除しますか？'))return;spots=spots.filter(x=>String(x.id)!==String(id));persist();if(markers[id]){map?.removeLayer(markers[id]);delete markers[id]}render();setStatus('スポットを削除しました。')}
-function exportData(){if(!adminMode){alert('バックアップ操作は管理者のみ利用できます。');return;}let b=new Blob([JSON.stringify(spots,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='500yen-kumamoto-spots.json';a.click();URL.revokeObjectURL(u)}
-function importData(e){if(!adminMode){alert('バックアップ操作は管理者のみ利用できます。');e.target.value='';return;}let f=e.target.files?.[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let a=JSON.parse(r.result);if(!Array.isArray(a)||a.some(s=>!s.name||!s.address||!['グルメ','自然','観光','体験'].includes(s.genre)||!Number.isFinite(+s.cost)||+s.cost<0||+s.cost>500))throw Error();if(!confirm(a.length+'件で現在の登録を置き換えますか？'))return;spots=a.map(s=>({...s,id:String(s.id||'spot-'+Date.now()+Math.random())}));persist();Object.values(markers).forEach(m=>map?.removeLayer(m));markers={};render();setStatus('バックアップを読み込みました。')}catch(e){alert('500円娯楽のJSONバックアップを選んでください。')}e.target.value=''};r.readAsText(f)}
-function resetData(){if(!adminMode){alert('初期化は管理者のみ利用できます。');return;}if(!confirm('現在の登録を初期状態に戻しますか？'))return;spots=seeds.map(s=>({...s}));persist();Object.values(markers).forEach(m=>map?.removeLayer(m));markers={};cancelEdit();render();setStatus('初期データに戻しました。')}
-window.findAddress=findAddress;window.selectSpot=selectSpot;window.editSpot=editSpot;window.cancelEdit=cancelEdit;window.deleteSpot=deleteSpot;window.exportData=exportData;window.importData=importData;window.resetData=resetData;
-render();updateAdminUI();if(window.L){map=L.map('map').setView([32.803,130.707],12);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);mapStatus.textContent='ピンを押すと詳細を確認できます。地図をクリックすると登録位置を指定できます。';map.on('click',e=>{draft={lat:e.latlng.lat,lng:e.latlng.lng};address.value=`地図で指定した場所 (${draft.lat.toFixed(5)}, ${draft.lng.toFixed(5)})`;setStatus('地図上の位置を選びました。名前などを入力して登録してね。');document.getElementById('register').scrollIntoView({behavior:'smooth'})});refreshMarkers(spots)}else mapStatus.textContent='地図を読み込めません。接続を確認してください。登録・検索は利用できます。';
-</script></body></html>
+:root{--green:#237a57;--dark:#18352b;--cream:#f6f8f5;--line:#dce5df}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;background:var(--cream);color:#26352e}
+header{background:var(--dark);color:white;padding:22px 16px;text-align:center}
+header h1{margin:0;font-size:clamp(22px,4vw,32px)}
+header p{margin:8px 0 0;color:#d6e8de}
+main{max-width:1180px;margin:20px auto;padding:0 14px;display:grid;grid-template-columns:340px 1fr;gap:16px}
+.panel,.map-panel{background:white;border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 3px 12px #163c2510}
+h2{font-size:18px;margin:0 0 14px;color:var(--dark)}
+label{display:block;font-weight:650;font-size:14px;margin:12px 0 6px}
+input,select,textarea,button{font:inherit}
+input,select,textarea{width:100%;padding:10px;border:1px solid #cbd8d0;border-radius:8px;background:white}
+input[type=range]{padding:0;accent-color:var(--green)}
+textarea{min-height:75px;resize:vertical}
+button{border:0;border-radius:8px;padding:10px 13px;background:var(--green);color:white;font-weight:700;cursor:pointer}
+button.secondary{background:#e9f1ec;color:var(--dark)}
+button.danger{background:#b74444}
+button:disabled{opacity:.55;cursor:not-allowed}
+.row{display:flex;gap:8px;align-items:center}
+.row>*{flex:1}
+#map{height:570px;border-radius:10px;z-index:1}
+.map-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}
+#status{font-size:13px;color:#557264;margin:8px 0}
+.spot-list{margin-top:14px;display:grid;gap:9px}
+.spot{border:1px solid var(--line);border-radius:9px;padding:10px}
+.spot strong{display:block}
+.spot small{color:#607368}
+.spot-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.spot-actions button{font-size:12px;padding:7px}
+.hidden{display:none!important}
+.muted{font-size:12px;color:#718078}
+.admin-box{border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
+.report{border:1px solid var(--line);padding:9px;border-radius:8px;margin:8px 0;font-size:13px}
+footer{text-align:center;color:#718078;padding:20px;font-size:12px}
+@media(max-width:850px){
+ main{grid-template-columns:1fr}
+ #map{height:440px}
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>熊本500円娯楽マップ</h1>
+<p>ワンコイン以下で楽しめる、熊本のスポットを見つけよう。</p>
+</header>
+
+<main>
+<section class="panel">
+<h2>スポットを探す</h2>
+
+<label for="budget">予算上限：<span id="budgetValue">500</span>円</label>
+<input id="budget" type="range" min="0" max="500" step="50" value="500">
+
+<label for="genre">ジャンル</label>
+<select id="genre">
+<option value="">すべて</option>
+<option>グルメ</option>
+<option>自然</option>
+<option>観光</option>
+<option>体験</option>
+</select>
+
+<label for="keyword">キーワード</label>
+<input id="keyword" placeholder="場所・説明・住所で検索">
+
+<div id="status">データを読み込んでいます…</div>
+<div id="spotList" class="spot-list"></div>
+
+<div class="admin-box">
+<h2>スポットを投稿</h2>
+<p class="muted">投稿には匿名認証を使用します。</p>
+
+<form id="spotForm">
+<label>スポット名</label>
+<input name="name" maxlength="80" required>
+
+<label>ジャンル</label>
+<select name="genre" required>
+<option value="グルメ">グルメ</option>
+<option value="自然">自然</option>
+<option value="観光">観光</option>
+<option value="体験">体験</option>
+</select>
+
+<label>料金（0〜500円）</label>
+<input name="cost" type="number" min="0" max="500" required>
+
+<label>住所・場所</label>
+<input name="address" maxlength="160" required>
+
+<label>紹介文</label>
+<textarea name="desc" maxlength="300" required></textarea>
+
+<div class="row">
+<div>
+<label>緯度（任意）</label>
+<input name="lat" type="number" step="any" placeholder="例：32.8031">
+</div>
+<div>
+<label>経度（任意）</label>
+<input name="lng" type="number" step="any" placeholder="例：130.7079">
+</div>
+</div>
+
+<p><button type="submit">投稿する</button></p>
+</form>
+
+<div id="adminArea" class="hidden">
+<div class="admin-box">
+<h2>管理者メニュー</h2>
+<p class="muted">管理者としてログイン中です。</p>
+
+<div class="row">
+<button id="seedButton" class="secondary" type="button">初期スポットを登録</button>
+<button id="logoutButton" class="danger" type="button">ログアウト</button>
+</div>
+
+<h2 style="margin-top:18px">報告一覧</h2>
+<div id="reportList"></div>
+</div>
+</div>
+
+<div id="loginArea" class="admin-box">
+<h2>管理者ログイン</h2>
+<form id="loginForm">
+<label>メールアドレス</label>
+<input name="email" type="email" required>
+
+<label>パスワード</label>
+<input name="password" type="password" required>
+
+<p><button type="submit" class="secondary">ログイン</button></p>
+</form>
+</div>
+</div>
+</section>
+
+<section class="map-panel">
+<div class="map-head">
+<h2>熊本市周辺のマップ</h2>
+<button id="exportButton" class="secondary" type="button">データを書き出す</button>
+</div>
+<div id="map"></div>
+<p class="muted">地図上のマーカーを押すとスポットの詳細を確認できます。</p>
+</section>
+</main>
+
+<footer>
+掲載情報は投稿内容に基づきます。訪問前に料金・営業状況をご確認ください。
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+
+import {
+ getAuth,
+ signInAnonymously,
+ onAuthStateChanged,
+ signInWithEmailAndPassword,
+ signOut
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+import {
+ getFirestore,
+ collection,
+ addDoc,
+ deleteDoc,
+ doc,
+ onSnapshot,
+ query,
+ orderBy,
+ serverTimestamp,
+ getDocs,
+ updateDoc
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+const firebaseConfig = {
+ apiKey: "AIzaSyDKVes9h_5iBEfhzqy6ffmmObPnB30Wes",
+ authDomain: "kumamoto-500yen-map.firebaseapp.com",
+ projectId: "kumamoto-500yen-map",
+ storageBucket: "kumamoto-500yen-map.firebasestorage.app",
+ messagingSenderId: "76434304305",
+ appId: "1:76434304305:web:bdc391a9f2181494255410"
+};
+
+const ADMIN_UIDS = [
+ "m9S5k6GpqsRK2ppjkla7klZF3pq2",
+ "kk3Efbe0RTazdisM3znSa0I2amz1"
+];
+
+const SEED_SPOTS = [
+ {
+  name:"熊本市役所 展望ロビー",
+  genre:"観光",
+  cost:0,
+  address:"熊本市中央区手取本町1-1",
+  desc:"市役所の展望ロビーから熊本市街を眺められるスポット。",
+  lat:32.8031,
+  lng:130.7079
+ },
+ {
+  name:"熊本城 二の丸広場",
+  genre:"観光",
+  cost:0,
+  address:"熊本市中央区二の丸",
+  desc:"熊本城を眺めながら散策できる広場。",
+  lat:32.8062,
+  lng:130.7021
+ },
+ {
+  name:"水前寺江津湖公園",
+  genre:"自然",
+  cost:0,
+  address:"熊本市東区広木町",
+  desc:"江津湖周辺の自然を楽しみながら散歩できる公園。",
+  lat:32.7656,
+  lng:130.7443
+ },
+ {
+  name:"ルフィ像（熊本県庁）",
+  genre:"観光",
+  cost:0,
+  address:"熊本市中央区水前寺6丁目18-1",
+  desc:"熊本県庁プロムナードに設置されたルフィ像。",
+  lat:32.7901,
+  lng:130.7415
+ },
+ {
+  name:"商店街で500円グルメ探し",
+  genre:"グルメ",
+  cost:500,
+  address:"熊本市中央区 下通・上通周辺",
+  desc:"商店街を歩きながらワンコインで楽しめるグルメを探そう。",
+  lat:32.8057,
+  lng:130.7110
+ },
+ {
+  name:"熊本市動植物園",
+  genre:"体験",
+  cost:500,
+  address:"熊本市東区健軍5丁目14-2",
+  desc:"動物や植物を楽しめる施設。入園料は最新情報を確認してください。",
+  lat:32.7780,
+  lng:130.7664
+ }
+];
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const spotsRef = collection(db,"spots");
+const reportsRef = collection(db,"reports");
+
+let currentUser = null;
+let isAdmin = false;
+let spots = [];
+let markers = [];
+
+const map = L.map("map").setView([32.803,130.713],13);
+
+L.tileLayer(
+ "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+ {
+  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+ }
+).addTo(map);
+
+const $ = id => document.getElementById(id);
+
+const esc = value => String(value ?? "").replace(/[&<>"']/g,c=>({
+ "&":"&amp;",
+ "<":"&lt;",
+ ">":"&gt;",
+ '"':"&quot;",
+ "'":"&#39;"
+}[c]));
+
+function visibleSpots(){
+ const max = Number($("budget").value);
+ const genre = $("genre").value;
+ const word = $("keyword").value.trim().toLowerCase();
+
+ return spots.filter(s =>
+  Number(s.cost) <= max &&
+  (!genre || s.genre === genre) &&
+  (!word || [s.name,s.address,s.desc].some(v =>
+   String(v || "").toLowerCase().includes(word)
+  ))
+ );
+}
+
+function render(){
+ $("budgetValue").textContent = $("budget").value;
+
+ const list = visibleSpots();
+
+ $("spotList").innerHTML = list.length
+ ? list.map(s => `
+  <article class="spot">
+   <strong>${esc(s.name)}</strong>
+   <small>${esc(s.genre)} ・ ${Number(s.cost)}円</small>
+   <p>${esc(s.desc)}</p>
+   <small>${esc(s.address)}</small>
+   <div class="spot-actions">
+    <button type="button" class="secondary" data-pan="${esc(s.id)}">地図で見る</button>
+    <button type="button" class="secondary" data-report="${esc(s.id)}">問題を報告</button>
+    ${isAdmin ? `<button type="button" class="danger" data-delete="${esc(s.id)}">削除</button>` : ""}
+   </div>
+  </article>
+ `).join("")
+ : "<p>条件に合うスポットはありません。</p>";
+
+ markers.forEach(m => map.removeLayer(m));
+ markers = [];
+
+ list.forEach(s => {
+  if(
+   s.lat != null &&
+   s.lng != null &&
+   Number.isFinite(Number(s.lat)) &&
+   Number.isFinite(Number(s.lng))
+  ){
+   const marker = L.marker([Number(s.lat),Number(s.lng)])
+    .addTo(map)
+    .bindPopup(`
+     <b>${esc(s.name)}</b><br>
+     ${esc(s.genre)}・${Number(s.cost)}円<br>
+     ${esc(s.desc)}
+    `);
+
+   markers.push(marker);
+  }
+ });
+
+ $("status").textContent = `${list.length}件のスポットを表示中`;
+}
+
+$("budget").addEventListener("input",render);
+$("genre").addEventListener("change",render);
+$("keyword").addEventListener("input",render);
+
+$("spotList").addEventListener("click",async e => {
+ const pan = e.target.dataset.pan;
+ const report = e.target.dataset.report;
+ const del = e.target.dataset.delete;
+
+ if(pan){
+  const s = spots.find(x => x.id === pan);
+
+  if(s && s.lat != null && s.lng != null){
+   map.setView([Number(s.lat),Number(s.lng)],16);
+
+   markers.forEach(m => {
+    if(
+     m.getLatLng().lat === Number(s.lat) &&
+     m.getLatLng().lng === Number(s.lng)
+    ){
+     m.openPopup();
+    }
+   });
+  }
+ }
+
+ if(report){
+  const s = spots.find(x => x.id === report);
+  const reason = prompt(`${s?.name || "このスポット"}の問題点を入力してください`);
+
+  if(reason?.trim()){
+   try{
+    await addDoc(reportsRef,{
+     spotId:report,
+     spotName:s.name,
+     reason:reason.trim(),
+     createdBy:currentUser.uid,
+     createdAt:serverTimestamp(),
+     status:"未確認"
+    });
+
+    alert("報告を送信しました。");
+   }catch(err){
+    alert("報告できませんでした："+err.message);
+   }
+  }
+ }
+
+ if(del && isAdmin && confirm("このスポットを削除しますか？")){
+  try{
+   await deleteDoc(doc(db,"spots",del));
+  }catch(err){
+   alert("削除できませんでした："+err.message);
+  }
+ }
+});
+
+$("spotForm").addEventListener("submit",async e => {
+ e.preventDefault();
+
+ if(!currentUser){
+  alert("認証中です。少し待ってから再度お試しください。");
+  return;
+ }
+
+ const f = new FormData(e.target);
+ const lat = f.get("lat");
+ const lng = f.get("lng");
+
+ const data = {
+  name:String(f.get("name")).trim(),
+  genre:f.get("genre"),
+  cost:Number(f.get("cost")),
+  address:String(f.get("address")).trim(),
+  desc:String(f.get("desc")).trim(),
+  lat:lat === "" ? null : Number(lat),
+  lng:lng === "" ? null : Number(lng),
+  seed:false,
+  createdBy:currentUser.uid,
+  createdAt:serverTimestamp()
+ };
+
+ try{
+  await addDoc(spotsRef,data);
+  e.target.reset();
+  alert("投稿しました。");
+ }catch(err){
+  alert("投稿できませんでした："+err.message);
+ }
+});
+
+$("loginForm").addEventListener("submit",async e => {
+ e.preventDefault();
+
+ const f = new FormData(e.target);
+
+ try{
+  await signInWithEmailAndPassword(
+   auth,
+   String(f.get("email")),
+   String(f.get("password"))
+  );
+
+  e.target.reset();
+ }catch(err){
+  alert("ログインできませんでした。メールアドレスとパスワードを確認してください。");
+ }
+});
+
+$("logoutButton").addEventListener("click",async() => {
+ await signOut(auth);
+});
+
+$("seedButton").addEventListener("click",async() => {
+ if(!isAdmin) return;
+
+ try{
+  const snap = await getDocs(spotsRef);
+  const existing = new Set(snap.docs.map(d => d.data().name));
+  let count = 0;
+
+  for(const s of SEED_SPOTS){
+   if(!existing.has(s.name)){
+    await addDoc(spotsRef,{
+     ...s,
+     seed:true,
+     createdBy:currentUser.uid,
+     createdAt:serverTimestamp()
+    });
+
+    count++;
+   }
+  }
+
+  alert(`${count}件の初期スポットを登録しました。`);
+ }catch(err){
+  alert("登録できませんでした："+err.message);
+ }
+});
+
+$("exportButton").addEventListener("click",() => {
+ const blob = new Blob(
+  [JSON.stringify(spots,null,2)],
+  {type:"application/json"}
+ );
+
+ const url = URL.createObjectURL(blob);
+ const a = document.createElement("a");
+
+ a.href = url;
+ a.download = "kumamoto-500yen-spots.json";
+ a.click();
+
+ URL.revokeObjectURL(url);
+});
+
+onAuthStateChanged(auth,async user => {
+ currentUser = user;
+
+ if(!user){
+  try{
+   await signInAnonymously(auth);
+  }catch(err){
+   $("status").textContent = "認証エラー："+err.message;
+  }
+  return;
+ }
+
+ isAdmin = ADMIN_UIDS.includes(user.uid);
+
+ $("adminArea").classList.toggle("hidden",!isAdmin);
+ $("loginArea").classList.toggle("hidden",isAdmin);
+
+ render();
+});
+
+onSnapshot(
+ query(spotsRef,orderBy("createdAt","desc")),
+ snap => {
+  spots = snap.docs.map(d => ({
+   id:d.id,
+   ...d.data()
+  }));
+
+  render();
+ },
+ err => {
+  $("status").textContent = "データ取得エラー："+err.message;
+ }
+);
+
+onSnapshot(
+ query(reportsRef,orderBy("createdAt","desc")),
+ snap => {
+  if(!isAdmin) return;
+
+  $("reportList").innerHTML = snap.empty
+   ? "<p class='muted'>報告はありません。</p>"
+   : snap.docs.map(d => {
+      const r = d.data();
+
+      return `
+       <div class="report">
+        <b>${esc(r.spotName)}</b>
+        <p>${esc(r.reason)}</p>
+        <small>状態：${esc(r.status)}</small>
+        <p>
+         <button class="secondary" data-resolve="${d.id}">
+          対応済みにする
+         </button>
+        </p>
+       </div>
+      `;
+     }).join("");
+ },
+ () => {}
+);
+
+$("reportList").addEventListener("click",async e => {
+ const id = e.target.dataset.resolve;
+
+ if(id && isAdmin){
+  try{
+   await updateDoc(doc(db,"reports",id),{
+    status:"対応済み"
+   });
+  }catch(err){
+   alert("更新できませんでした："+err.message);
+  }
+ }
+});
+</script>
+</body>
+</html>
