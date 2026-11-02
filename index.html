@@ -451,9 +451,9 @@ $("loginForm").addEventListener("submit",async e => {
   );
 
   e.target.reset();
- }catch(err){
-  alert("ログインできませんでした。メールアドレスとパスワードを確認してください。");
- }
+}catch(err){
+  alert("ログインエラー: " + err.code + "\n" + err.message);
+}
 });
 
 $("logoutButton").addEventListener("click",async() => {
