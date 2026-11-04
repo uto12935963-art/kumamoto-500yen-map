@@ -158,6 +158,34 @@ footer{text-align:center;color:#718078;padding:20px;font-size:12px}
   70%{transform:scale(1.2);opacity:1}
   100%{transform:scale(1);opacity:1}
 }
+/* スポット投稿ボタン */
+.post-open summary{
+  display:block;
+  text-align:center;
+  background:#526f4e;
+  color:white;
+  font-size:16px;
+  font-weight:800;
+  padding:15px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  box-shadow:0 3px 7px rgba(0,0,0,0.15);
+  transition:0.2s;
+  list-style:none;
+}
+
+.post-open summary::-webkit-details-marker{
+  display:none;
+}
+
+.post-open summary:hover{
+  background:#3e583b;
+  transform:translateY(-2px);
+}
+
+.post-open[open] summary{
+  background:#343a36;
+}
 </style>
 </head>
 <body>
@@ -185,7 +213,7 @@ footer{text-align:center;color:#718078;padding:20px;font-size:12px}
 
 <label for="keyword">キーワード</label>
 <input id="keyword" placeholder="場所・説明・住所で検索">
-<details class="admin-box">
+<details class="admin-box post-open">
 <summary>＋ スポットを投稿する</summary>
 <p class="muted">投稿には匿名認証を使用します。</p>
 
@@ -228,7 +256,7 @@ footer{text-align:center;color:#718078;padding:20px;font-size:12px}
 <div id="status">データを読み込んでいます…</div>
 <div id="spotList" class="spot-list"></div>
 
-<details class="admin-box">
+<details class="admin-box post-open">
 <summary>＋ スポットを投稿する</summary>
 <p class="muted">投稿には匿名認証を使用します。</p>
 
