@@ -158,34 +158,6 @@ footer{text-align:center;color:#718078;padding:20px;font-size:12px}
   70%{transform:scale(1.2);opacity:1}
   100%{transform:scale(1);opacity:1}
 }
-/* スポット投稿ボタン */
-.post-open summary{
-  display:block;
-  text-align:center;
-  background:#526f4e;
-  color:white;
-  font-size:16px;
-  font-weight:800;
-  padding:15px 12px;
-  border-radius:10px;
-  cursor:pointer;
-  box-shadow:0 3px 7px rgba(0,0,0,0.15);
-  transition:0.2s;
-  list-style:none;
-}
-
-.post-open summary::-webkit-details-marker{
-  display:none;
-}
-
-.post-open summary:hover{
-  background:#3e583b;
-  transform:translateY(-2px);
-}
-
-.post-open[open] summary{
-  background:#343a36;
-}
 </style>
 </head>
 <body>
@@ -213,7 +185,88 @@ footer{text-align:center;color:#718078;padding:20px;font-size:12px}
 
 <label for="keyword">キーワード</label>
 <input id="keyword" placeholder="場所・説明・住所で検索">
+<details class="admin-box">
+<summary>＋ スポットを投稿する</summary>
+<p class="muted">投稿には匿名認証を使用します。</p>
 
+<form id="spotForm">
+<label>スポット名</label>
+<input name="name" maxlength="80" required>
+
+<label>ジャンル</label>
+<select name="genre" required>
+<option value="グルメ">グルメ</option>
+<option value="自然">自然</option>
+<option value="観光">観光</option>
+<option value="体験">体験</option>
+</select>
+
+<label>料金（0〜500円）</label>
+<input name="cost" type="number" min="0" max="500" required>
+
+<label>住所・場所</label>
+<input name="address" maxlength="160" required>
+
+<label>紹介文</label>
+<textarea name="desc" maxlength="300" required></textarea>
+
+<div class="row">
+<div>
+<label>緯度（任意）</label>
+<input name="lat" type="number" step="any" placeholder="例：32.8031">
+</div>
+<div>
+<label>経度（任意）</label>
+<input name="lng" type="number" step="any" placeholder="例：130.7079">
+</div>
+</div>
+
+<p><button type="submit">投稿する</button></p>
+</form>
+</details>
+ 
+<div id="status">データを読み込んでいます…</div>
+<div id="spotList" class="spot-list"></div>
+
+<details class="admin-box">
+<summary>＋ スポットを投稿する</summary>
+<p class="muted">投稿には匿名認証を使用します。</p>
+
+<form id="spotForm">
+<label>スポット名</label>
+<input name="name" maxlength="80" required>
+
+<label>ジャンル</label>
+<select name="genre" required>
+<option value="グルメ">グルメ</option>
+<option value="自然">自然</option>
+<option value="観光">観光</option>
+<option value="体験">体験</option>
+</select>
+
+<label>料金（0〜500円）</label>
+<input name="cost" type="number" min="0" max="500" required>
+
+<label>住所・場所</label>
+<input name="address" maxlength="160" required>
+
+<label>紹介文</label>
+<textarea name="desc" maxlength="300" required></textarea>
+
+<div class="row">
+<div>
+<label>緯度（任意）</label>
+<input name="lat" type="number" step="any" placeholder="例：32.8031">
+</div>
+<div>
+<label>経度（任意）</label>
+<input name="lng" type="number" step="any" placeholder="例：130.7079">
+</div>
+</div>
+
+<p><button type="submit">投稿する</button></p>
+</form>
+</details>
  
 <div id="adminArea" class="hidden">
 <div class="admin-box">
